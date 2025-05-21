@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>HỆ THỐNG LẤY SỐ KHÁM BỆNH</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Quill CSS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <div class="login-box">
+    <h1>HỆ THỐNG LẤY SỐ KHÁM BỆNH</h1>
+    <h2><i class="fas fa-sign-in-alt"></i> Đăng nhập</h2>
+    
+    <div class="login-field">
+      <label><i class="fas fa-user"></i> ID:</label>
+      <input type="text" id="username" placeholder="Nhập ID...">
+    </div>
+    
+    <div class="login-field">
+      <label><i class="fas fa-lock"></i> Mật khẩu:</label>
+      <input type="password" id="password" placeholder="Nhập mật khẩu...">
+    </div>
+    
+    <button onclick="login()">🔐 Đăng nhập</button>
+  </div>
+
+<!-- Phát số -->
+<div id="phatso-container" class="container" style="display: none;">
+  <h2 class="section-title">
+    <i class="fas fa-clipboard-list"></i>
+    Phát số khám bệnh
+  </h2>
+  <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Phòng khám</th>
+        <th>Đã cấp</th>
+        <th>Còn lại</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody id="phatso-list"></tbody>
+  </table>
+</div>
+
+<!-- Phòng khám -->
+<div id="phongkham-container" class="container" style="display: none;">
+  <h2 id="main-heading" style="font-size: 26px; color: #007bff; font-weight: bold; text-align: center; margin-bottom: 20px;">
+    🏥 <span style="text-decoration: underline;">VUI LÒNG THIẾT LẬP PHÒNG KHÁM!</span>
+  </h2>
+
+  <!-- Hiển thị tên phòng khám và các nút -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h3 id="clinic-name-display" class="clinic-header" style="
+      background-color: #007bff;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      display: none;
+    ">
+      🏥 <span id="clinic-name-text"></span>
+    </h3>
+
+    <div id="top-right-buttons" style="display: none; gap: 10px;">
+      <button onclick="switchClinic()" class="logout-btn">🔄 Đổi phòng khám</button>
+      <button onclick="logout()" class="logout-btn">🚪 Đăng xuất</button>
+    </div>
+  </div>
+
+  <!-- Khối chọn phòng khám -->
+  <div id="clinic-select-container" style="text-align: center;">
+    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;">
+      <select id="clinic-select" style="font-size: 18px; padding: 8px 16px; border-radius: 6px; min-width: 250px;">
+        <option value="">-- Chọn phòng khám --</option>
+      </select>
+      <button onclick="confirmClinic()" style="
+        font-size: 18px;
+        padding: 8px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      ">✅ OK</button>
+    </div>
+  </div>
+
+  <!-- Giao diện chính -->
+  <div id="phongkham-action" style="display: none;">
+    <div style="text-align: center; margin-top: 20px;">
+      <button onclick="callNextNumbers(1)" class="next-btn" style="padding: 12px 32px;">📢 NEXT</button>
+    </div>
+
+    <div id="phongkham-stats" class="phongkham-stats-box" style="display: none; justify-content: center; margin-top: 20px;">
+      <div class="stat-box">
+        <div class="stat-label">Đã cấp</div>
+        <div id="total-issued" class="stat-value">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Vừa gọi</div>
+        <div id="last-called" class="stat-value">-</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Còn lại</div>
+        <div id="remaining" class="stat-value">0</div>
+      </div>
+    </div>
+
+    <div id="called-section" style="margin-top: 20px; display: none;">
+      <h4 style="text-align: center;">📜 Danh sách số đã gọi:</h4>
+      <div id="called-list" class="called-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin -->
+<div id="admin-container" class="container" style="display: none;">
+  <h2 class="section-title">🩺 Quản lý Phòng Khám</h2>
+  <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+  <table id="admin-clinic-list">
+    <thead>
+      <tr>
+        <th>Thêm / Xóa</th>
+        <th>Tên Phòng Khám</th>
+        <th>Giới hạn lượt khám</th>
+        <th>Đã cấp</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+          <!-- các phòng khám sẽ được thêm tại đây bằng script -->
+      <tr class="add-row">
+        <td>
+          <button onclick="addClinic()" title="Thêm phòng khám" class="icon-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+              <path d="M12 5c.552 0 1 .448 1 1v5h5c.552 0 1 .448 1 1s-.448 1-1 1h-5v5c0 .552-.448 1-1 1s-1-.448-1-1v-5H6c-.552 0-1-.448-1-1s.448-1 1-1h5V6c0-.552.448-1 1-1z"/>
+            </svg>
+          </button>
+        </td>
+        <td>
+          <input type="text" id="new-clinic-name" class="admin-input-text" placeholder="Tên phòng khám" />
+        </td>
+        <td>
+          <input type="number" id="new-clinic-limit" class="admin-input-number" placeholder="Giới hạn" min="1" />
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <div id="highlight-editor" style="margin-top: 30px;">
+    <h3>Chỉnh sửa Dịch vụ nổi bật:</h3>
+    <div id="editor" style="height: 200px;"></div>
+    <button onclick="saveHighlight()" style="margin-top: 10px;">Lưu nội dung</button>
+  </div>
+  <div style="margin-top: 20px;">
+    <button onclick="saveChanges()">💾 Lưu thay đổi</button>
+    <button onclick="resetIssued()">🔄 Reset về 100 số</button>
+  </div>
+</div>
+
+<!-- Khu vực in vé -->
+<div id="print-area" style="display: none;">
+  <div class="ticket-wrapper">
+    <!-- Cột bên trái: Thông tin khám bệnh (30%) -->
+    <div class="ticket-left">
+      <img src="logott.png" class="watermark-front" alt="Logo">
+      <h3 id="clinicNamePrint">Tên phòng khám</h3>
+      <h1 id="ticketNumberPrint">00</h1>
+      <p id="timePrint">Ngày tháng năm</p>
+      <p id="waitingMessage" style="margin-top: 10px; font-size: 10pt; font-style: italic;">
+        Xin vui lòng chờ đến lượt khám bệnh
+      </p>
+    </div>
+
+    <!-- Cột bên phải: Dịch vụ nổi bật (70%) -->
+    <div class="ticket-right">
+      <h3 style="margin-top: 0;">Dịch vụ nổi bật</h3>
+      <div id="highlight-service"></div>
+    </div>
+  </div>
+</div>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="script.js"></script>
+
+<!-- Quill JS -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script>
+  const quill = new Quill('#editor', {
+    theme: 'snow'
+  });
+
+  function saveHighlight() {
+    const content = quill.root.innerHTML.trim();
+    if (!content) {
+      alert("Nội dung không được để trống!");
+      return;
+    }
+    document.getElementById("highlight-service").innerHTML = content;
+    localStorage.setItem("highlightHTML", content);
+    alert("Đã lưu nội dung dịch vụ nổi bật!");
+  }
+
+  function renderHighlightEditor() {
+    const saved = localStorage.getItem("highlightHTML");
+    if (saved) quill.root.innerHTML = saved;
+  }
+
+  window.addEventListener("load", renderHighlightEditor);
+</script>
+
+</body>
+</html>
