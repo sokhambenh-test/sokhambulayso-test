@@ -305,29 +305,27 @@ function issueNumber(name, isPriority = false) {
 }
 
 function handlePrint(clinicName, number, isPriority = false) {
-    const now = new Date();
-    document.getElementById("clinicNamePrint").innerText = clinicName;
-    const displayNumber = typeof number === "string"
-     ? number
-     : number.toString().padStart(2, "0");
-    document.getElementById("ticketNumberPrint").innerText = displayNumber;
-    document.getElementById("timePrint").innerText = now.toLocaleString("vi-VN");
-    const printArea = document.getElementById("print-area");
-    printArea.style.display = "block";
-    const highlight = localStorage.getItem("highlightService") || `
-  <h4>Dịch vụ nổi bật:</h4>
-  <ul>
-    <li>Khám bệnh ngoài giờ</li>
-    <li>Tư vấn sức khỏe từ xa</li>
-    <li>Tiêm chủng, khám định kỳ</li>
-  </ul>
-  <p>Liên hệ: 1900.xxx.xxx hoặc đến trực tiếp quầy tư vấn.</p>
-`;
-document.getElementById("highlight-service").innerHTML = localStorage.getItem("highlightHTML");
+  const now = new Date();
+  document.getElementById("clinicNamePrint").innerText = clinicName;
+  const displayNumber = typeof number === "string"
+    ? number
+    : number.toString().padStart(2, "0");
+  document.getElementById("ticketNumberPrint").innerText = displayNumber;
+  document.getElementById("timePrint").innerText = now.toLocaleString("vi-VN");
+  const printArea = document.getElementById("print-area");
+  printArea.style.display = "block";
+
+  // ✅ Luôn luôn tải nội dung từ Firebase (dù là trình duyệt nào)
+  firebase.database().ref("highlightHTML").once("value").then(snapshot => {
+    const content = snapshot.val() || "<i>Không có nội dung dịch vụ nổi bật.</i>";
+    document.getElementById("highlight-service").innerHTML = content;
+
+    // Sau khi gán xong nội dung, tiến hành in
     setTimeout(() => {
-        window.print();
-        printArea.style.display = "none";
+      window.print();
+      printArea.style.display = "none";
     }, 300);
+  });
 }
 
 async function callNextNumbers(count) {
@@ -550,3 +548,18 @@ function switchClinic() {
       select.appendChild(option);
     });
   }
+  function saveHighlight() {
+  const content = quill.root.innerHTML.trim();
+  if (!content) {
+    alert("Nội dung không được để trống!");
+    return;
+  }
+
+  localStorage.setItem("highlightHTML", content);
+  document.getElementById("highlight-service").innerHTML = content;
+
+  // 💾 Lưu lên Firebase
+  firebase.database().ref("highlightHTML").set(content);
+
+  alert("Đã lưu nội dung dịch vụ nổi bật!");
+}

@@ -197,6 +197,19 @@ button:hover {
     size: A5 landscape;
     margin: 0;
   }
+  #ticketNumberPrint {
+    font-size: 78px;
+    font-weight: bold;
+    color: #007bff;
+    margin: 20px 0 10px;
+  }
+
+  #clinicNamePrint {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
 }
 
 /* Giao diện danh sách số đã gọi (giao diện dạng lưới) */
