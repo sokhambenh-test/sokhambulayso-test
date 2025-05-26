@@ -3,9 +3,9 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCTLY077P1_w_avRLNaJIFL4I0outYOnGY",
   authDomain: "testhethonglayso.firebaseapp.com",
-  databaseURL: "https://testhethonglayso-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://testhethonglayso-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "testhethonglayso",
-  storageBucket: "testhethonglayso.firebasestorage.app",
+  storageBucket: "testhethonglayso.appspot.com",
   messagingSenderId: "30722248113",
   appId: "1:30722248113:web:f8ee3346e70cb396060190"
 };
