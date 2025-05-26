@@ -3,7 +3,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCTLY077P1_w_avRLNaJIFL4I0outYOnGY",
   authDomain: "testhethonglayso.firebaseapp.com",
-  https://testhethonglayso-default-rtdb.asia-southeast1.firebasedatabase.app/
+  databaseURL: "https://testhethonglayso-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "testhethonglayso",
   storageBucket: "testhethonglayso.firebasestorage.app",
   messagingSenderId: "30722248113",
