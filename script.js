@@ -1,15 +1,14 @@
 // ====== script.js ======
 // === Khởi tạo Firebase ===
 const firebaseConfig = {
-    apiKey: "AIzaSyAHLTITwmLt845c1pvhBtvJuV5OLZN0dDA",
-    authDomain: "ttytsokhambenh.firebaseapp.com",
-    databaseURL: "https://ttytsokhambenh-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    projectId: "ttytsokhambenh",
-    storageBucket: "ttytsokhambenh.firebasestorage.app",
-    messagingSenderId: "805566207765",
-    appId: "1:805566207765:web:e083cca4dd29bc59a8bb1c",
-    measurementId: "G-VDK48MJ8Q4"
-  };
+  apiKey: "AIzaSyCTLY077P1_w_avRLNaJIFL4I0outYOnGY",
+  authDomain: "testhethonglayso.firebaseapp.com",
+  https://testhethonglayso-default-rtdb.asia-southeast1.firebasedatabase.app/
+  projectId: "testhethonglayso",
+  storageBucket: "testhethonglayso.firebasestorage.app",
+  messagingSenderId: "30722248113",
+  appId: "1:30722248113:web:f8ee3346e70cb396060190"
+};
   
   firebase.initializeApp(firebaseConfig);
   let users = [];
@@ -131,7 +130,7 @@ function showDashboard(user) {
         document.getElementById("phongkham-action").style.display = "block";
         document.getElementById("main-heading").innerText = "GỌI BỆNH NHÂN VÀO PHÒNG KHÁM!";
         document.getElementById("top-right-buttons").style.display = "block";
-        updateCalledList();
+        setTimeout(updateCalledList, 100);
     } else {
         showClinicSelect(); // ✅ Chỉ gọi khi chưa có selectedClinic
     }
@@ -490,8 +489,18 @@ window.onload = function () {
             });
         });
     });
+    // 🟢 Nếu là tài khoản phongkham, thì cập nhật số đã cấp mỗi 5 giây
+    setInterval(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user && user.role === "phongkham") {
+        loadCalledNumbers(() => {
+            loadCalledHistory(() => {
+                updateCalledList(); // ✅ Cập nhật đúng
+            });
+        });
+    }
+    }, 5000); // mỗi 5 giây
 };
-
 
 function recallNumber(number) {
     const slug = selectedClinic.toLowerCase().replace(/\s+/g, "-");
